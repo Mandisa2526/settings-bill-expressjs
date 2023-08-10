@@ -1,14 +1,15 @@
 import express from 'express';
-let app = express();
-
 import { engine } from 'express-handlebars';
 import bodyParser from 'body-parser';
 import SettingsBill from './settings-bill.js';
+
+let app = express();
+
 let settingsBill = SettingsBill();
 
 
 //configure
-app.engine('handlebars', engine({defaultLayout:'main'}));
+app.engine('handlebars', engine());
 app.set('view engine', 'handlebars');
 app.set('views', './views');
 
