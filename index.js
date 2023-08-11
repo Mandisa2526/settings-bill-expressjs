@@ -2,6 +2,7 @@ import express from 'express';
 import { engine } from 'express-handlebars';
 import bodyParser from 'body-parser';
 import SettingsBill from './settings-bill.js';
+import moment from 'moment';
 
 let app = express();
 
@@ -21,9 +22,15 @@ app.use(bodyParser.json());
 app.use(express.static('public'));
 
 app.get("/", function(req, res) {
+  //let Totals = settingsBill.totals();
   res.render('index', {
     setting: settingsBill.getSettings(),
     totals : settingsBill.totals(),
+    warningLevel: settingsBill.hasReachedWarningLevel(),
+    criticalLevel: settingsBill.hasReachedCriticalLevel(),
+    //roundCall: totals.callTotal().toFixed(2),
+    //roundSms:  totals.smsTotal().toFixed(2),
+    //roundTotal:totals.grandTotal().toFixed(2),
   });
 });
 
@@ -45,11 +52,14 @@ app.post('/action', function(req, res){
   res.redirect("/");
 });
 app.get("/actions", function(req, res){
+
   res.render('actions', {actions: settingsBill.actions()});
+  
 });
 app.get("/actions/:actionType", function(req, res){
   const  actionType = req.params.actionType;
   res.render('actions', {actions: settingsBill.actionsFor(actionType)});
+  
 });
 
 

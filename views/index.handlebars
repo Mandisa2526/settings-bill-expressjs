@@ -69,3 +69,12 @@
           </div>
         </div>
       </div>
+      <script>
+        let warningLvl = {{warningLevel}}
+        let criticalLvl = {{criticalLevel}}
+        if(warningLvl){
+          document.querySelector('.totalSettings').style.color = 'orange';
+        }else if(criticalLvl){
+          document.querySelector('.totalSettings').style.color = 'red';
+        }
+      </script>
