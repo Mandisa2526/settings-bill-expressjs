@@ -3,6 +3,7 @@ import { engine } from 'express-handlebars';
 import bodyParser from 'body-parser';
 import SettingsBill from './settings-bill.js';
 import moment from 'moment';
+let today = moment();
 
 let app = express();
 
@@ -48,17 +49,24 @@ app.post('/settings', function(req, res){
 app.post('/action', function(req, res){
   //capture the callCost
   console.log(req.body.billItemTypeWithSettings);
-  settingsBill.recordAction(req.body.billItemTypeWithSettings)
+  settingsBill.recordAction(req.body.billItemTypeWithSettings);
   res.redirect("/");
 });
 app.get("/actions", function(req, res){
 
   res.render('actions', {actions: settingsBill.actions()});
-  
+  actionsList.forEach((action)=>{
+    action.timestamp = moment(action.timestamp).fromNow();
+  });
+
 });
 app.get("/actions/:actionType", function(req, res){
   const  actionType = req.params.actionType;
+  const actionsTypes = settingsBill.actionsFor(actionType);
   res.render('actions', {actions: settingsBill.actionsFor(actionType)});
+  actionsTypes.forEach((action)=>{
+    action.timestamp = moment(action.timestamp).fromNow();
+  })
   
 });
 
