@@ -5,7 +5,7 @@ export default function SettingsBill() {
     let warningLevel;
     let criticalLevel; 
 
-    let actionList = [];
+    let actionsList = [];
 
     function setSettings (settings) {
         smsCost = Number(settings.smsCost);
@@ -32,25 +32,26 @@ export default function SettingsBill() {
         else if (action === 'call'){
             cost = callCost;
         }
-        if(cost > 0){
-            actionList.push({
-                type: action,
-                cost,
-                timestamp: new Date().getTime(),
-            }); 
+        if(!hasReachedCriticalLevel()){
+            if(cost > 0){
+                actionsList.push({
+                    type: action,
+                    cost,
+                    timestamp: new Date().getTime(),
+                }); 
+            }
         }
     }
-
     function actions(){
-        return actionList;
+        return actionsList;
     }
 
     function actionsFor(type){
         const filteredActions = [];
 
         // loop through all the entries in the action list 
-        for (let index = 0; index < actionList.length; index++) {
-            const action = actionList[index];
+        for (let index = 0; index < actionsList.length; index++) {
+            const action = actionsList[index];
             // check this is the type we are doing the total for 
             if (action.type === type) {
                 // add the action to the list
@@ -66,8 +67,8 @@ export default function SettingsBill() {
     function getTotal(type) {
         let total = 0;
         // loop through all the entries in the action list 
-        for (let index = 0; index < actionList.length; index++) {
-            const action = actionList[index];
+        for (let index = 0; index < actionsList.length; index++) {
+            const action = actionsList[index];
             // check this is the type we are doing the total for 
             if (action.type === type) {
                 // if it is add the total to the list

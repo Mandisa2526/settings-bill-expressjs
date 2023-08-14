@@ -3,7 +3,7 @@ import { engine } from 'express-handlebars';
 import bodyParser from 'body-parser';
 import SettingsBill from './settings-bill.js';
 import moment from 'moment';
-let today = moment();
+//let today = moment();
 
 let app = express();
 
@@ -29,7 +29,7 @@ app.get("/", function(req, res) {
     totals : settingsBill.totals(),
     warningLevel: settingsBill.hasReachedWarningLevel(),
     criticalLevel: settingsBill.hasReachedCriticalLevel(),
-    //roundCall: totals.callTotal().toFixed(2),
+    //{{settings.callCost}}: totals.callTotal().toFixed(2),
     //roundSms:  totals.smsTotal().toFixed(2),
     //roundTotal:totals.grandTotal().toFixed(2),
   });
@@ -52,22 +52,26 @@ app.post('/action', function(req, res){
   settingsBill.recordAction(req.body.billItemTypeWithSettings);
   res.redirect("/");
 });
+
 app.get("/actions", function(req, res){
-
-  res.render('actions', {actions: settingsBill.actions()});
-  actionsList.forEach((action)=>{
-    action.timestamp = moment(action.timestamp).fromNow();
-  });
-
-});
-app.get("/actions/:actionType", function(req, res){
-  const  actionType = req.params.actionType;
-  const actionsTypes = settingsBill.actionsFor(actionType);
-  res.render('actions', {actions: settingsBill.actionsFor(actionType)});
-  actionsTypes.forEach((action)=>{
-    action.timestamp = moment(action.timestamp).fromNow();
+  let actionList = [];
+  settingsBill.actions().forEach((action)=>{
+    let clonedAction = {...action};
+    clonedAction.timestamp = moment(action.timestamp).fromNow();
+    actionList.push(clonedAction);
   })
-  
+  res.render('actions', {actions: actionList});
+});
+
+app.get("/actions/:actionType", function(req, res){
+  let actionList = [];
+  const  actionType = req.params.actionType;
+  settingsBill.actionsFor(actionType).forEach((action)=>{
+    let clonedAction = {...action};
+    clonedAction.timestamp = moment(action.timestamp).fromNow();
+    actionList.push(clonedAction);
+  })
+  res.render('actions', {actions: actionList});
 });
 
 
